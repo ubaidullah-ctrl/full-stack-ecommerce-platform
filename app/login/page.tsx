@@ -37,19 +37,28 @@ const LoginPage = () => {
       return;
     }
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+        callbackUrl: '/'
+      });
 
-    if (res?.error) {
-      setError("Invalid email or password");
-      toast.error("Invalid email or password");
-      if (res?.url) router.replace("/");
-    } else {
-      setError("");
-      toast.success("Successful login");
+      console.log("Sign in response:", res);
+
+      if (res?.error) {
+        setError("Invalid email or password");
+        toast.error("Invalid email or password");
+      } else if (res?.url) {
+        setError("");
+        toast.success("Successful login");
+        router.push(res.url);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("An error occurred during login");
+      toast.error("An error occurred during login");
     }
   };
 

@@ -75,6 +75,7 @@ model Category {
   id       String    @id @default(uuid())
   name     String    @unique
   products Product[] // Define a one-to-many relationship
+  slug     String    @unique
 }
 
 model Wishlist {

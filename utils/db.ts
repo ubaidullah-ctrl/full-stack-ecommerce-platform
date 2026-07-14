@@ -1,7 +1,14 @@
 import { PrismaClient } from "@prisma/client"; 
 
 const prismaClientSingleton = () => {
-    return new PrismaClient();
+    try {
+        return new PrismaClient({
+            log: ['query', 'error', 'warn'],
+        });
+    } catch (error) {
+        console.error('Error initializing Prisma:', error);
+        throw error;
+    }
 }
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
@@ -10,7 +17,14 @@ const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClientSingleton | undefined;
 }
 
-const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+let prisma: PrismaClientSingleton;
+
+try {
+    prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+} catch (error) {
+    console.error('Failed to initialize Prisma client:', error);
+    throw error;
+}
 
 
 export default prisma;
