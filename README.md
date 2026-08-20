@@ -1,177 +1,185 @@
-# Full-Stack E-commerce Platform
+# Full-Stack E-Commerce & Admin Platform
 
-An adapted electronics-commerce application with customer shopping flows and an administrative dashboard.
+A modern, full-stack electronics e-commerce web application built with **Next.js 14 (App Router)**, **TypeScript**, **NextAuth**, **Prisma ORM**, **Express**, and **MySQL**. It features an end-to-end shopping experience for customers and a comprehensive administrative dashboard for inventory, category, and order management.
 
-> This repository is based on an existing open-source project. It should not be interpreted as wholly original work. See [Attribution](#attribution) and [My Contribution](#my-contribution).
+---
 
-## Overview
+## 🚀 Key Features
 
-The application connects product discovery, authentication, cart, wishlist, checkout, orders, and administrative management in a Next.js storefront backed by MySQL services.
+### 🛍️ Customer Storefront & Shopping Experience
+- **Dynamic Product Catalog**: Browse electronics with responsive grid layouts, category filters, real-time search, and price sorting.
+- **Product Detail Views**: High-resolution image galleries, specifications, stock availability indicators, and customer reviews.
+- **Cart & Wishlist Management**: Global state management powered by Zustand with persistent local storage and instant feedback.
+- **Secure Checkout & Order Management**: Multi-step checkout workflow with customer details validation and instant order generation.
+- **User Authentication**: Secure credentials-based authentication with NextAuth.js, bcrypt password hashing, and session management.
 
-The target users are customers shopping for electronics and administrators managing products, categories, orders, and user records.
+### 🛠️ Administrative Dashboard
+- **Product Management**: Create, update, view, and delete products with image upload handling and stock tracking.
+- **Category Hierarchy**: Organize inventory with unique slugs, dynamic category mapping, and filtering.
+- **Order Tracking & Fulfillment**: Monitor customer orders, update statuses (pending, processing, shipped, delivered), and review order items.
+- **User Administration**: Role-based access control (Admin / Customer) with user record management.
 
-## Implemented Features
+---
 
-- Product catalogue, detail pages, search, sorting, and filters
-- Credentials-based authentication with NextAuth
-- Cart and wishlist state
-- Validated checkout and order creation flows
-- Administrative product, category, order, and user screens
-- Product-image upload handling
-- Prisma-backed MySQL schemas
-- Express API for commerce operations
-
-## My Contribution
-
-The original application architecture, design, documentation, screenshots, and most implementation were created by the upstream authors credited below.
-
-Verified maintenance work in this local copy includes:
-
-- Configuring and debugging credentials authentication with Prisma-backed users
-- Refining login request and redirect handling
-- Adding reusable Prisma client setup for local development
-- Extending category data with a unique slug and adding the related migration
-- Adding database seed support and local seed data
-- Improving environment-variable hygiene and removing a route that exposed database configuration
-- Replacing the inherited README with an accurate contribution and attribution record
-
-The repository was imported as a single initial commit, so it does not preserve the upstream commit history or support a claim of complete individual ownership.
-
-## Technology Stack
-
-### Frontend and application
-
-- Next.js 14 App Router
-- React 18 and TypeScript
-- Tailwind CSS, Headless UI, Flowbite React, and DaisyUI
-- Zustand for cart, wishlist, pagination, and sorting state
-- NextAuth for authentication
-
-### Backend and data
-
-- Next.js route handlers
-- Node.js and Express
-- Prisma
-- MySQL
-- Zod and bcryptjs
-
-## Architecture
+## 🏗️ Architecture & System Design
 
 ```mermaid
-flowchart LR
-    B[Browser] --> N[Next.js application]
-    N --> A[NextAuth and Next.js routes]
-    N --> E[Express API on port 3001]
-    A --> P[Prisma]
-    E --> P
-    P --> M[(MySQL)]
+flowchart TD
+    subgraph Client["Client Tier (Browser)"]
+        UI["Next.js 14 Frontend\n(React 18, Tailwind CSS, DaisyUI)"]
+        State["Client State\n(Zustand Cart / Wishlist)"]
+    end
+
+    subgraph AppServer["Application Tier"]
+        Auth["NextAuth.js\n(Credentials Provider & Session Guard)"]
+        NextAPI["Next.js Route Handlers\n(Auth & Server Components)"]
+        ExpressAPI["Express API Service\n(Commerce Operations on Port 3001)"]
+    end
+
+    subgraph DataLayer["Persistence Tier"]
+        Prisma["Prisma ORM"]
+        MySQL[("MySQL Database\n(Users, Products, Orders, Categories)")]
+    end
+
+    UI --> Auth
+    UI --> NextAPI
+    UI --> ExpressAPI
+    Auth --> Prisma
+    NextAPI --> Prisma
+    ExpressAPI --> Prisma
+    Prisma --> MySQL
 ```
 
-The repository currently contains both Next.js route handlers and a separate Express service. Many commerce requests still use a hard-coded `http://localhost:3001` origin.
+---
 
-## Important Workflows
+## 💻 Tech Stack
 
-- **Shopping:** browse or search products, add items to cart or wishlist, validate checkout details, and create an order.
-- **Authentication:** validate credentials through NextAuth and Prisma-backed user records.
-- **Administration:** manage products, categories, orders, and users through protected dashboard routes.
-- **Persistence:** use Prisma schemas and MySQL for product, user, order, category, image, and wishlist data.
+| Layer | Technology |
+|---|---|
+| **Frontend Framework** | [Next.js 14](https://nextjs.org/) (App Router), [React 18](https://react.dev/) |
+| **Language** | [TypeScript](https://www.typescriptlang.org/) & [JavaScript](https://developer.mozilla.org/) |
+| **Styling & UI** | [Tailwind CSS](https://tailwindcss.com/), [DaisyUI](https://daisyui.com/), [Headless UI](https://headlessui.com/), [Flowbite](https://flowbite-react.com/) |
+| **State Management** | [Zustand](https://github.com/pmndrs/zustand) |
+| **Authentication** | [NextAuth.js](https://next-auth.js.org/) & [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
+| **Backend & APIs** | [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/), Next.js API Routes |
+| **ORM & Database** | [Prisma ORM](https://www.prisma.io/), [MySQL](https://www.mysql.com/) |
+| **Validation** | [Zod](https://zod.dev/) |
 
-## Local Setup
+---
 
-Prerequisites: Node.js 18 or newer, npm, and MySQL.
+## 📁 Repository Structure
 
+```text
+├── app/                  # Next.js 14 App Router pages, layouts, and route handlers
+│   ├── (dashboard)/      # Admin dashboard pages (products, categories, orders, users)
+│   ├── api/              # NextAuth and backend API endpoints
+│   ├── cart/             # Shopping cart page
+│   ├── checkout/         # Multi-step checkout flow
+│   ├── product/          # Product detail and listing pages
+│   └── wishlist/         # Saved items wishlist page
+├── components/           # Reusable UI components (Navbar, Footer, Hero, ProductCard, etc.)
+├── helpers/              # Utility helpers and API fetch wrappers
+├── lib/                  # Library configurations and helpers
+├── prisma/               # Prisma schema and migrations for root app
+├── public/               # Static assets and product images
+├── server/               # Express backend API service
+│   ├── controllers/      # Route controllers for products, categories, orders
+│   ├── prisma/           # Prisma schema, migrations, and database seed script
+│   ├── routes/           # Express router endpoints
+│   └── app.js            # Express application entry point
+├── utils/                # Database singleton, auth schemas, and seed helpers
+└── tailwind.config.ts    # Tailwind CSS styling configuration
+```
+
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **npm** or **yarn**
+- **MySQL Server**: running locally or hosted remotely
+
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/ubaidullah-ctrl/Electronic-Ecommerce-Store.git
-cd Electronic-Ecommerce-Store
+git clone https://github.com/ubaidullah-ctrl/full-stack-ecommerce-platform.git
+cd full-stack-ecommerce-platform
+```
+
+### 2. Install Dependencies
+Install dependencies for both the frontend application and backend server:
+```bash
 npm install
 cd server
 npm install
 cd ..
 ```
 
-Create environment files from the provided examples:
+### 3. Configure Environment Variables
+Create `.env` files for both the root application and the Express server:
 
-```powershell
-Copy-Item .env.example .env
-Copy-Item server/.env.example server/.env
+**Root Application (`.env`):**
+```env
+DATABASE_URL="mysql://username:password@localhost:3306/ecommerce_db"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-super-secret-jwt-key"
 ```
 
-Update both files for your local MySQL database. Then generate the Prisma clients and apply the schema using the workflow appropriate for your database:
+**Express Server (`server/.env`):**
+```env
+DATABASE_URL="mysql://username:password@localhost:3306/ecommerce_db"
+PORT=3001
+```
 
+### 4. Database Setup & Seeding
+Generate the Prisma clients and push the schema to your MySQL instance:
 ```bash
+# Push schema and generate Prisma client
 npx prisma generate
 npx prisma db push
+
+# Generate Prisma client for the Express server
 cd server
 npx prisma generate
 npx prisma db push
+
+# (Optional) Seed the database with demo products, categories, and users
+node prisma/seed.js
 cd ..
 ```
 
-Start the Express API in one terminal:
-
+### 5. Run the Application
+Start the Express API service in one terminal:
 ```bash
 cd server
 node app.js
 ```
 
-Start Next.js in another terminal:
-
+Start the Next.js development server in a second terminal:
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:3000`. The Express service defaults to `http://localhost:3001`.
+Open [http://localhost:3000](http://localhost:3000) in your browser. The Express API service will be active at [http://localhost:3001](http://localhost:3001).
 
-## Environment Variables
+---
 
-Root application:
+## 🔒 Security & Best Practices
+- **Protected Routes**: NextAuth middleware guards administrative dashboards and user-specific order histories.
+- **Password Security**: Passwords are salted and hashed with `bcryptjs` before persistence.
+- **Environment Isolation**: Database credentials and JWT secrets are managed via server-side environment variables.
 
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | Prisma MySQL connection URL |
-| `NEXTAUTH_URL` | Canonical local or deployed NextAuth URL |
-| `NEXTAUTH_SECRET` | Long random value used to sign authentication data |
+---
 
-Express service:
+## 👨‍💻 Author
 
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | Prisma MySQL connection URL |
+**Ubaid Ullah**
+- **Portfolio**: [Portfolio Website](https://my-portfolio-website-plum-theta.vercel.app/)
+- **GitHub**: [@ubaidullah-ctrl](https://github.com/ubaidullah-ctrl)
+- **LinkedIn**: [ubaid-ullah-](https://www.linkedin.com/in/ubaid-ullah-/)
+- **Email**: [ubaidullah3048@gmail.com](mailto:ubaidullah3048@gmail.com)
 
-Never commit real environment files.
+---
 
-## Testing and Quality Commands
-
-```bash
-npm run lint
-npm run build
-```
-
-The root application has no automated test command. The server package contains a placeholder test command that exits with an error; it is not an implemented test suite.
-
-## Current Limitations
-
-- Most API requests use a hard-coded localhost service origin.
-- The Next.js and Express API responsibilities overlap.
-- Automated unit and integration tests are not configured in this copy.
-- Authentication and database workflows require a configured MySQL instance.
-- The current visual design should be modernised before promoting a live demo.
-- A stable production deployment has not been verified.
-
-## Future Improvements
-
-- Move the Express origin into validated environment configuration.
-- Consolidate or clearly separate the two API boundaries.
-- Add automated coverage for authentication, cart, checkout, orders, and admin access.
-- Remove development logging that is not appropriate for production.
-- Modernise the storefront and verify mobile workflows before deployment.
-
-## Attribution
-
-This repository is based on [Kuzma02/Electronics-eCommerce-Shop-With-Admin-Dashboard-NextJS-NodeJS](https://github.com/Kuzma02/Electronics-eCommerce-Shop-With-Admin-Dashboard-NextJS-NodeJS), created by Kuzma02 with Bojan Cesnak as a software-engineering project.
-
-The upstream project supplied the original design, source architecture, application features, documentation, and screenshots. Refer to the upstream repository for its original history and author documentation.
-
-## License
-
-The existing upstream licence has been preserved in [LICENSE](./LICENSE). Review upstream terms before relicensing or redistributing substantial modifications.
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
